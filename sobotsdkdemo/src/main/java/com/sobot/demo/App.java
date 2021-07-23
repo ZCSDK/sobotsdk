@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.sobot.chat.SobotApi;
 import com.sobot.chat.SobotUIConfig;
+import com.sobot.chat.ZCSobotApi;
 import com.sobot.chat.api.model.SobotLocationModel;
 import com.sobot.chat.api.apiUtils.SobotBaseUrl;
 import com.sobot.chat.listener.SobotPlusMenuListener;
@@ -33,6 +34,7 @@ public class App extends Application {
         if (TextUtils.isEmpty(appkey)) {
             appkey = "991bcba6975246448640724385796b81";
         }
+        ZCSobotApi.setShowDebug(true);
         SobotApi.initSobotSDK(this, appkey, SobotSPUtil.getStringData(this, "sobot_partnerId", ""));
         initUi();
 //        customMenu();

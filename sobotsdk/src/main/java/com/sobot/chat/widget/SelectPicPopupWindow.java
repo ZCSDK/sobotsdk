@@ -6,12 +6,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +28,9 @@ import com.sobot.chat.activity.WebViewActivity;
 import com.sobot.chat.utils.CustomToast;
 import com.sobot.chat.utils.LogUtils;
 import com.sobot.chat.utils.ResourceUtils;
+import com.sobot.chat.utils.SharedPreferencesUtil;
 import com.sobot.chat.utils.ToastUtil;
+import com.sobot.chat.utils.ZhiChiConstant;
 import com.sobot.chat.widget.zxing.Result;
 import com.sobot.chat.widget.zxing.util.CodeUtils;
 import com.sobot.pictureframe.SobotBitmapUtil;
@@ -36,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
 
 
 @SuppressLint("ViewConstructor")
@@ -62,7 +68,24 @@ public class SelectPicPopupWindow extends PopupWindow {
         imgUrl = url;
         this.type = type;
         this.context = context.getApplicationContext();
+        //修改国际化语言
+        changeAppLanguage();
         initView();
+    }
+
+    public void changeAppLanguage() {
+        Locale language = (Locale) SharedPreferencesUtil.getObject(context, ZhiChiConstant.SOBOT_LANGUAGE);
+        try {
+            if (language != null) {
+                // 本地语言设置
+                Resources res = context.getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = new Configuration();
+                conf.locale = language;
+                res.updateConfiguration(conf, dm);
+            }
+        } catch (Exception e) {
+        }
     }
 
     /**

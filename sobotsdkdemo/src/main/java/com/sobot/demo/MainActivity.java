@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         ZCSobotApi.setNotificationFlag(getApplicationContext(), true, com.sobot.chat.R.drawable.sobot_logo_small_icon, com.sobot.chat.R.drawable.sobot_logo_icon);
 
         Information info=new Information();
+        info.setPartnerid("1q1q");
         info.setApp_key("1c1da2c0aad047d7ba1d14ecd18ae4f6");
         ZCSobotApi.openZCChat(MainActivity.this,info);
     }

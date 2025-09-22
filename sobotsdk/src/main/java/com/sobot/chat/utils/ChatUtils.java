@@ -149,11 +149,11 @@ public class ChatUtils {
             return;
         }
         Intent intent;
-        if (Build.VERSION.SDK_INT < 27 || RomUtils.isOppo() || RomUtils.isOnePlus() || RomUtils.isVivo()) {
+        if (Build.VERSION.SDK_INT < 19 || RomUtils.isOppo() || RomUtils.isOnePlus()) {
             intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("video/*");
         } else {
-            intent = new Intent(Intent.ACTION_PICK);
+            intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
             intent.setDataAndType(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, "video/*");
         }
         try {
@@ -230,13 +230,13 @@ public class ChatUtils {
         return ResourceUtils.getResString(context, name);
     }
 
-    public static void sendPicByUri(Context context, Handler handler,
+    public static void sendPicByUri(Activity context, Handler handler,
                                     Uri selectedImage, ZhiChiInitModeBase initModel, final ListView lv_message,
-                                    final SobotMsgAdapter messageAdapter, boolean isCamera) {
+                                    final SobotMsgAdapter messageAdapter, boolean isCamera,Intent dataIntent) {
         if (initModel == null) {
             return;
         }
-        String picturePath = ImageUtils.getPath(context, selectedImage);
+        String picturePath = ImageUtils.getPath(context, selectedImage,dataIntent);
         LogUtils.i("picturePath:" + picturePath);
         if (!TextUtils.isEmpty(picturePath)) {
             File tmpFile = new File(picturePath);

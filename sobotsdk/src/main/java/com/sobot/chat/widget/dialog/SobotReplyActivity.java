@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -377,29 +378,41 @@ public class SobotReplyActivity extends SobotDialogBaseActivity implements Adapt
             }
             if (v.getId() == getResId("btn_pick_photo")) {
                 LogUtils.i("选择照片");
-                permissionListener = new PermissionListenerImpl() {
-                    @Override
-                    public void onPermissionSuccessListener() {
-                        ChatUtils.openSelectPic(SobotReplyActivity.this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    permissionListener = new PermissionListenerImpl() {
+                        @Override
+                        public void onPermissionSuccessListener() {
+                            ChatUtils.openSelectPic(SobotReplyActivity.this);
+                        }
+                    };
+                    if (!isHasPermission(1, 0)) {
+                        return;
                     }
-                };
-                if (!isHasPermission(1, 0)) {
-                    return;
+                    ChatUtils.openSelectPic(SobotReplyActivity.this);
                 }
-                ChatUtils.openSelectPic(SobotReplyActivity.this);
             }
             if (v.getId() == getResId("btn_pick_vedio")) {
                 LogUtils.i("选择视频");
-                permissionListener = new PermissionListenerImpl() {
-                    @Override
-                    public void onPermissionSuccessListener() {
-                        ChatUtils.openSelectVedio(SobotReplyActivity.this, null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("video/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    permissionListener = new PermissionListenerImpl() {
+                        @Override
+                        public void onPermissionSuccessListener() {
+                            ChatUtils.openSelectVedio(SobotReplyActivity.this, null);
+                        }
+                    };
+                    if (!isHasPermission(1, 1)) {
+                        return;
                     }
-                };
-                if (!isHasPermission(1, 1)) {
-                    return;
+                    ChatUtils.openSelectVedio(SobotReplyActivity.this, null);
                 }
-                ChatUtils.openSelectVedio(SobotReplyActivity.this, null);
             }
 
         }
@@ -444,7 +457,7 @@ public class SobotReplyActivity extends SobotDialogBaseActivity implements Adapt
                     if (selectedImage == null) {
                         selectedImage = ImageUtils.getUri(data, SobotReplyActivity.this);
                     }
-                    String path = ImageUtils.getPath(this, selectedImage);
+                    String path = ImageUtils.getPath(this, selectedImage,data);
                     if (MediaFileUtils.isVideoFileType(path)) {
                         try {
                             File selectedFile = new File(path);

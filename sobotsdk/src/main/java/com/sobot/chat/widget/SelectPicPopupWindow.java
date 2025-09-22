@@ -57,22 +57,6 @@ public class SelectPicPopupWindow extends PopupWindow {
     //如果需要识别图片是否是二维码，记录识别结果
     private Result[] result;
 
-    public SelectPicPopupWindow(final Activity context, String uid) {
-        this.context = context;
-        this.uid = uid;
-        initView();
-    }
-
-    public SelectPicPopupWindow(final Activity context, String url, String type) {
-        super(context);
-        imgUrl = url;
-        this.type = type;
-        this.context = context.getApplicationContext();
-        //修改国际化语言
-        changeAppLanguage();
-        initView();
-    }
-
     public void changeAppLanguage() {
         Locale language = (Locale) SharedPreferencesUtil.getObject(context, ZhiChiConstant.SOBOT_LANGUAGE);
         try {
@@ -86,6 +70,16 @@ public class SelectPicPopupWindow extends PopupWindow {
             }
         } catch (Exception e) {
         }
+    }
+
+    public SelectPicPopupWindow(final Activity context, String url, String type) {
+        super(context);
+        imgUrl = url;
+        this.type = type;
+        this.context = context.getApplicationContext();
+        //修改国际化语言
+        changeAppLanguage();
+        initView();
     }
 
     /**

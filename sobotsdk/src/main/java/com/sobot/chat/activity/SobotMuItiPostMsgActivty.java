@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -963,7 +965,7 @@ public class SobotMuItiPostMsgActivty extends SobotDialogBaseActivity implements
                     if (selectedImage == null) {
                         selectedImage = ImageUtils.getUri(data, getSobotBaseActivity());
                     }
-                    String path = ImageUtils.getPath(getSobotBaseActivity(), selectedImage);
+                    String path = ImageUtils.getPath(getSobotBaseActivity(), selectedImage,data);
                     if (!StringUtils.isEmpty(path)) {
                         if (MediaFileUtils.isVideoFileType(path)) {
                             try {
@@ -1070,15 +1072,28 @@ public class SobotMuItiPostMsgActivty extends SobotDialogBaseActivity implements
             }
             if (v.getId() == getResId("btn_pick_photo")) {
                 LogUtils.i("选择照片");
-                selectPicFromLocal();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("video/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    selectVedioFromLocal();
+                }
             }
             if (v.getId() == getResId("btn_pick_vedio")) {
                 LogUtils.i("选择视频");
-                selectVedioFromLocal();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("video/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    selectVedioFromLocal();
+                }
             }
 
         }
     };
+
 
     @Override
     public void onClickCusField(View view, int fieldType, SobotFieldModel cusField) {

@@ -2,10 +2,12 @@
 package com.sobot.chat.utils;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,48 +35,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 public class ImageUtils {
-
-    public static int computeSampleSize(BitmapFactory.Options options,
-                                        int minSideLength, int maxNumOfPixels) {
-        int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);
-
-        int roundedSize;
-        if (initialSize <= 8) {
-            roundedSize = 1;
-            while (roundedSize < initialSize) {
-                roundedSize <<= 1;
-            }
-        } else {
-            roundedSize = (initialSize + 7) / 8 * 8;
-        }
-
-        return roundedSize;
-    }
-
-    public static int computeInitialSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {
-        double w = options.outWidth;
-        double h = options.outHeight;
-
-        int lowerBound = (maxNumOfPixels == -1) ? 1 :
-                (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
-        int upperBound = (minSideLength == -1) ? 128 :
-                (int) Math.min(Math.floor(w / minSideLength),
-                        Math.floor(h / minSideLength));
-
-        if (upperBound < lowerBound) {
-            // return the larger one when there is no overlapping zone.
-            return lowerBound;
-        }
-
-        if ((maxNumOfPixels == -1) &&
-                (minSideLength == -1)) {
-            return 1;
-        } else if (minSideLength == -1) {
-            return lowerBound;
-        } else {
-            return upperBound;
-        }
-    }
 
     public static int readPictureDegree(String path) {
         int degree = 0;
@@ -113,6 +73,35 @@ public class ImageUtils {
         }
         // mtx.postRotate(rotate);
         return Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
+    }
+
+    public static String getPath(Activity activity, Uri uri, Intent data) {
+        String resultPath = getPath(activity, uri);
+        if (StringUtils.isEmpty(resultPath)) {
+            // 1. 如果通过原代码ImageUtils.getPath(...)返回的path为空,  则使用Intent# getDataString()返回的String进行解析
+            if (!TextUtils.isEmpty(data.getDataString()) && data.getDataString().startsWith("file:///")) {
+                resultPath = data.getDataString().replace("file:///", "");
+            } else {
+                String[] proj = {MediaStore.Images.Media.DATA};
+                Cursor cursor = null;
+                try {
+                    cursor = activity.managedQuery(uri, proj, null, null, null);
+                    if (cursor == null) {
+                        return "";
+                    }
+                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToFirst();
+                    //最后根据索引值获取图片路径
+                    resultPath = cursor.getString(column_index);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (cursor != null)
+                        cursor.close();
+                }
+            }
+        }
+        return resultPath;
     }
 
     /**
@@ -552,4 +541,5 @@ public class ImageUtils {
             return file.getAbsolutePath();
         }
     }
+
 }

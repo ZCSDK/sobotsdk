@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -889,7 +892,7 @@ public class SobotPostMsgFragment extends SobotBaseFragment implements View.OnCl
                     if (selectedImage == null) {
                         selectedImage = ImageUtils.getUri(data, getSobotActivity());
                     }
-                    String path = ImageUtils.getPath(getSobotActivity(), selectedImage);
+                    String path = ImageUtils.getPath(getSobotActivity(), selectedImage,data);
                     if (!StringUtils.isEmpty(path)) {
                         if (MediaFileUtils.isVideoFileType(path)) {
                             try {
@@ -996,11 +999,23 @@ public class SobotPostMsgFragment extends SobotBaseFragment implements View.OnCl
             }
             if (v.getId() == getResId("btn_pick_photo")) {
                 LogUtils.i("选择照片");
-                selectPicFromLocal();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    selectPicFromLocal();
+                }
             }
             if (v.getId() == getResId("btn_pick_vedio")) {
                 LogUtils.i("选择视频");
-                selectVedioFromLocal();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                    intent.setType("video/*");
+                    startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+                } else {
+                    selectVedioFromLocal();
+                }
             }
 
         }

@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -3878,7 +3879,13 @@ public class SobotChatFSFragment extends SobotChatBaseFragment implements View.O
     @Override
     public void btnPicture() {
         hidePanelAndKeyboard(mPanelRoot);
-        selectPicFromLocal();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            intent.setType("image/*");
+            startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+        } else {
+            selectPicFromLocal();
+        }
         lv_message.setSelection(messageAdapter.getCount());
     }
 
@@ -3889,7 +3896,13 @@ public class SobotChatFSFragment extends SobotChatBaseFragment implements View.O
     @Override
     public void btnVedio() {
         hidePanelAndKeyboard(mPanelRoot);
-        selectVedioFromLocal();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            intent.setType("video/*");
+            startActivityForResult(intent, ZhiChiConstant.REQUEST_CODE_picture);
+        } else {
+            selectVedioFromLocal();
+        }
         lv_message.setSelection(messageAdapter.getCount());
     }
 
@@ -5209,7 +5222,7 @@ public class SobotChatFSFragment extends SobotChatBaseFragment implements View.O
                         if (selectedImage == null) {
                             selectedImage = ImageUtils.getUri(data, getSobotActivity());
                         }
-                        String path = ImageUtils.getPath(getSobotActivity(), selectedImage);
+                        String path = ImageUtils.getPath(getSobotActivity(), selectedImage,data);
                         if (MediaFileUtils.isVideoFileType(path)) {
                             try {
                                 File selectedFile = new File(path);
@@ -5228,7 +5241,7 @@ public class SobotChatFSFragment extends SobotChatBaseFragment implements View.O
                                 e.printStackTrace();
                             }
                         } else {
-                            ChatUtils.sendPicByUri(getSobotActivity(), handler, selectedImage, initModel, lv_message, messageAdapter, false);
+                            ChatUtils.sendPicByUri(getSobotActivity(), handler, selectedImage, initModel, lv_message, messageAdapter, false,data);
                         }
                     } else {
                         ToastUtil.showLongToast(mAppContext, getResString("sobot_did_not_get_picture_path"));
@@ -5286,7 +5299,7 @@ public class SobotChatFSFragment extends SobotChatBaseFragment implements View.O
                             if (selectedFileUri == null) {
                                 selectedFileUri = ImageUtils.getUri(data, getSobotActivity());
                             }
-                            String path = ImageUtils.getPath(getSobotActivity(), selectedFileUri);
+                            String path = ImageUtils.getPath(getSobotActivity(), selectedFileUri,data);
                             if (TextUtils.isEmpty(path)) {
                                 ToastUtil.showToast(getSobotActivity(), ResourceUtils.getResString(getSobotActivity(), "sobot_cannot_open_file"));
                                 return;

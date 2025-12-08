@@ -200,7 +200,7 @@ public class HtmlTools {
         content= replaceHtmlEntities(content);
         widget.setMovementMethod(LinkMovementClickMethod.getInstance());
         widget.setFocusable(false);
-        Spanned span = formatRichTextWithPic(widget, content.replace("&", "&amp;").replace("\n", "<br/>"), color);
+        Spanned span = formatRichTextWithPic(widget, content.replace("\n", "<br/>"), color);
         // 显示表情
         span = InputHelper.displayEmoji(context.getApplicationContext(), span);
         // 显示链接
@@ -236,7 +236,7 @@ public class HtmlTools {
         }
         content= replaceHtmlEntities(content);
         widget.setMovementMethod(LinkMovementClickMethod.getInstance());
-        Spanned span = formatRichTextWithPic(widget, content.replace("&", "&amp;").replace("\n", "<br/>"), color);
+        Spanned span = formatRichTextWithPic(widget, content.replace("\n", "<br/>"), color);
         // 显示表情
         span = InputHelper.displayEmoji(context.getApplicationContext(), span);
         // 显示链接
@@ -288,7 +288,7 @@ public class HtmlTools {
             content = content.replaceAll("\n", "<br/>");
         }
         widget.setMovementMethod(LinkMovementClickMethod.getInstance());
-        Spanned span = formatRichTextWithPic(widget, content.replace("&", "&amp;").replace("\n", "<br/>"), color);
+        Spanned span = formatRichTextWithPic(widget, content.replace("\n", "<br/>"), color);
         // 显示表情
         span = InputHelper.displayEmoji(context.getApplicationContext(), span);
         // 显示链接
@@ -449,6 +449,7 @@ public class HtmlTools {
         // 法语字符支持
         return content.replace("&#39;", "'")
                 .replace("&amp;#39;", "'")
+                .replace("&amp;", "&")
                 .replace("&eacute;", "é")
                 .replace("&amp;eacute;", "é")
                 .replace("&egrave;", "è")

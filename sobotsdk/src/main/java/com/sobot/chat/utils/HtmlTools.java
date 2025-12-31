@@ -449,7 +449,6 @@ public class HtmlTools {
         // 法语字符支持
         return content.replace("&#39;", "'")
                 .replace("&amp;#39;", "'")
-                .replace("&amp;", "&")
                 .replace("&eacute;", "é")
                 .replace("&amp;eacute;", "é")
                 .replace("&egrave;", "è")
